@@ -10,7 +10,7 @@ passVeka="000000"
 passMacwarrior="000000"
 passwordRootSql="000000"
 passMumble="000000"
-passSuperUser_Mumbe="00000"0
+passSuperUser_Mumbe="00000"
 
 # reset des logs
 echo '' > /tmp/main
