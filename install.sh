@@ -2,7 +2,7 @@
 
 echoVERT()
 {
-    echo -e "\033[31m $1 \033[0m "
+    echo -e "\033[32m $1 \033[0m "
 }
 
 echoVERT ':: Mise a jour du serveur'
