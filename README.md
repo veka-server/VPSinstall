@@ -25,10 +25,11 @@ systemctl daemon-reload
 ```
 Redemarrer docker
 ```
-sudo service docker restart
+service docker restart
 ```
 Tester  l'API
 ```
 curl http://localhost:2375/images/json
 ```
+Si le retour est un tableau vide la config est terminée.
 
