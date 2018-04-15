@@ -10,7 +10,7 @@ apt-get -y update
 apt-get -y upgrade
 
 echoVERT ':: Ajout des librairies'
-apt-get -y install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+apt-get -y install apt-transport-https ca-certificates curl gnupg2 software-properties-common git
 
 echoVERT ':: Ajout du depot officiel de docker'
 curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - 
