@@ -7,6 +7,8 @@ Utilisation
 wget -q -O - https://raw.githubusercontent.com/veka-server/docker-ce_install_debian/master/install.sh | bash
 ```
 
+---
+
 ### Active API avec TLS
 
 Dans l'exemple ci-dessous nous utiliserons le nom de domaine : machin.truc.com
@@ -36,6 +38,8 @@ Tester  l'API
 curl https://machin.truc.com:2375/images/json --cert ~/.docker/cert.pem --key ~/.docker/key.pem --cacert ~/.docker/ca.pem
 ```
 Si le retour est un tableau vide la config est terminée.
+
+---
 
 ### Active API sans TLS
 
