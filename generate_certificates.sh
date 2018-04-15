@@ -103,18 +103,18 @@ if [ -d "/etc/profile.d" ]; then
   echo " => Creating profile.d/docker"
   sudo sh -c "echo '#!/bin/bash 
 export DOCKER_CERT_PATH=/home/$USER/.docker
-export DOCKER_HOST=tcp://$DOCKER_HOST:2376
+export DOCKER_HOST=tcp://$DOCKER_HOST:2375
 export DOCKER_TLS_VERIFY=1' > /etc/profile.d/docker.sh"
   sudo chmod +x /etc/profile.d/docker.sh
   source /etc/profile.d/docker.sh
 else
   echo " => WARNING: No /etc/profile.d directoy on your system."
   echo " =>   You will need to set the following environment variables before running the docker client:"
-  echo " =>   DOCKER_HOST=tcp://$DOCKER_HOST:2376"
+  echo " =>   DOCKER_HOST=tcp://$DOCKER_HOST:2375"
   echo " =>   DOCKER_TLS_VERIFY=1"
 fi
 
-OPTIONS="--tlsverify --tlscacert=$HOME/.docker/ca.pem --tlscert=$HOME/.docker/server-cert.pem --tlskey=$HOME/.docker/server-key.pem -H=0.0.0.0:2376"
+OPTIONS="--tlsverify --tlscacert=$HOME/.docker/ca.pem --tlscert=$HOME/.docker/server-cert.pem --tlskey=$HOME/.docker/server-key.pem -H=0.0.0.0:2375"
 if [ -f "/etc/sysconfig/docker" ]; then
   echo " => Configuring /etc/sysconfig/docker"
   BACKUP="/etc/sysconfig/docker.$(date +"%s")"
@@ -129,6 +129,6 @@ else
   echo " =>   $OPTIONS" 
 fi
 
-export DOCKER_HOST=tcp://DOCKER_HOST:2376
+export DOCKER_HOST=tcp://DOCKER_HOST:2375
 export DOCKER_TLS_VERIFY=1
 echo " => Done! You just need to restart docker for the changes to take effect"
