@@ -1,4 +1,4 @@
-VPSinstall
+Description
 ==========
 
 Script d'instalaltion de docker sur un Debian 9 vierge
