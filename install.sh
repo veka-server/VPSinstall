@@ -5,13 +5,6 @@
 #----------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------
 
-passRoot="000000"
-passVeka="000000"
-passMacwarrior="000000"
-passwordRootSql="000000"
-passMumble="000000"
-passSuperUser_Mumbe="00000"
-
 # reset des logs
 echo '' > /tmp/main
 echo '' > /tmp/log
@@ -306,32 +299,6 @@ fi
 
 on_kill_user()
 {
-  #configuration de phpmyadmin
-  dpkg-reconfigure -plow phpmyadmin
-
-  dpkg-reconfigure mumble-server
-  sed -i 's/database=/#database=/' /etc/mumble-server.ini
-  sed -i 's/icesecretwrite=/#icesecretwrite=/' /etc/mumble-server.ini
-  sed -i "1i\database=mumble" /etc/mumble-server.ini
-  sed -i "1i\dbDriver=QMYSQL" /etc/mumble-server.ini
-  sed -i "1i\dbUsername=mumble" /etc/mumble-server.ini
-  sed -i "1i\dbPassword=$passMumble" /etc/mumble-server.ini
-  sed -i "1i\dbHost=localhost" /etc/mumble-server.ini
-  sed -i "1i\dbPrefix=murmur_" /etc/mumble-server.ini
-
-    echo 'create database mumble ;' > /tmp/tmp.sql
-    echo "grant all on mumble.* to mumble@'localhost' identified by '$passMumble' ;" >> /tmp/tmp.sql
-    mysql -u root -p$passwordRootSql < /tmp/tmp.sql
-    rm /tmp/tmp.sql
-
-  evalLog '/etc/init.d/mumble-server restart'
-
-#  configuration de postfix
-#  dpkg-reconfigure postfix
-
-#  dpkg-reconfigure courier-base
-#  dpkg-reconfigure courier-imap
-
 }
 
 evalMain()
@@ -346,189 +313,20 @@ evalLog()
 
 update()
 {
-   evalMain 'echo ":: Mise a jour du serveur"'
-   evalLog 'apt-get -y update'
-   evalLog 'apt-get -y upgrade'
-}
-
-root()
-{
-   evalMain 'echo ":: Modification du mot de passe root"'
-   evalLog 'echo  -e "'$1'\n'$1'\n" | passwd root'
-
-}
-
-
-makeUser()
-{
-   # creation de l'utilisateur
-   evalMain 'echo ":: Creation du compte de '$1' "'
-   evalLog 'useradd -m '$1
-   evalLog 'echo -e "'$2'\n'$2'\n" | passwd '$1
-}
-
-install_apache()
-{
-   evalMain 'echo ":: Installation apache" '
-   evalLog 'apt-get -y install apache2 apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert'
-
-   # activation des réecriture d'URL
-   evalLog 'a2enmod rewrite'
-
-   evalLog '/etc/init.d/apache2 start'
-
-}
-
-
-install_php()
-{
-   evalMain 'echo ":: Installation de PHP "'
-   
-   evalLog 'apt-get -y install libapache2-mod-php5 php5 php5-common php5-curl php5-dev php5-gd php5-idn php-pear php5-imagick php5-imap php5-json php5-mcrypt php5-memcache php5-mhash php5-ming php5-mysql php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl php-apc'
-
-   echo "
-   <VirtualHost *:80>
-      ServerAdmin veka61@laposte.net
-      ServerName 82.196.11.194
-      DocumentRoot /srv/hello
-      <Directory />
-              Options FollowSymLinks
-              AllowOverride None
-      </Directory>
-      <Directory /srv/hello>
-              Options Indexes FollowSymLinks MultiViews
-              AllowOverride None
-              Order allow,deny
-              allow from all
-      </Directory>
-   </VirtualHost>" > /etc/apache2/sites-available/001-hello
-
-   echo "
-   ServerName 127.0.0.1" >> /etc/apache2/apache2.conf
-
-   evalLog 'mkdir /srv/hello'
-
-   echo "<?php echo 'hello world' ?>" > /srv/hello/index.php
-
-   evalLog 'chmod -R 777 /srv/hello'
-
-   evalLog 'a2dissite 000-default'
-
-   evalLog 'a2ensite 001-hello'
-
-   # redemarrage d'apache pour prendre en compte les modifications
-   evalLog '/etc/init.d/apache2 restart'
-
-}
-
-install_nodejs()
-{
-   evalMain 'echo ":: Installation de NodeJs" '
-
-    evalLog 'apt-get -y install python g++ make git-core'
-    evalLog 'echo "Telechargement des sources de nodejs"'
-    evalLog 'git clone https://github.com/joyent/node.git -q '
-    cd node
-    evalLog 'echo "Configure"'
-    evalLog './configure --openssl-libpath=/usr/lib/ssl'
-    evalLog 'echo "Compilation"'
-    evalLog 'make'
-    evalLog 'echo "Installation"'
-    evalLog 'make install'
-    cd
-    # Configure seems not to find libssl by default so we give it an explicit pointer.
-    # Optionally: you can isolate node by adding --prefix=/opt/node
-    #./configure --openssl-libpath=/usr/lib/ssl
-
-    evalLog 'echo "Nettoyage"'
-    evalLog 'rm -r node*'
-}
-
-install_fail2ban()
-{
-  evalMain 'echo ":: Installation de fail2ban" '
-  evalLog 'apt-get -y install fail2ban'
-}
-
-install_mysql()
-{
-  evalMain 'echo ":: Installation de mysql" '
-  export DEBIAN_FRONTEND=noninteractive
-  evalLog 'sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db'
-  evalLog 'apt-get -y install mariadb-server'
-  evalLog 'mysqladmin -u root password $passwordRootSql'
-}
-
-install_phpmyadmin()
-{
-  evalMain 'echo ":: Installation de phpmyadmin" '
-  evalLog 'apt-get -y install phpmyadmin'
-}
-
-install_htop()
-{
-  evalMain 'echo ":: Installation de htop" '
-  evalLog 'apt-get -y install htop'
-}
-
-install_postfix()
-{
-  evalMain 'echo ":: Installation de postfix" '
-  evalLog 'apt-get -y install postfix'
-}
-
-install_bind()
-{
-  evalMain 'echo ":: Installation de bind" '
-  evalLog 'apt-get -y install bind9'
-}
-
-install_courier()
-{
-  evalMain 'echo ":: Installation de courier" '
-  evalLog 'apt-get -y install courier-authdaemon courier-base courier-imap courier-maildrop courier-pop courier-pop-ssl courier-imap-ssl'
-}
-
-install_mumble()
-{
-  evalMain 'echo ":: Installation de mumble" '
-  evalLog 'apt-get -y install lzma bzip2 mumble-server git'
-  cd /srv/hello/
-  evalLog 'git clone https://github.com/veka-server/murmurRegister.git'
 }
 
 script()
 {
+   evalMain 'echo ":: Mise a jour du serveur"'
+   evalLog 'apt-get -y update'
+   evalLog 'apt-get -y upgrade'
 
-   # un accées root est requis
-   root $passRoot
+   evalLog 'apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common'     
+   evalLog 'curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"'
 
-   update
-
-   makeUser "veka" $passVeka
-   makeUser "macwarrior" $passMacwarrior
-
-   install_apache
-
-   install_php
-
-   install_mysql
-
-   install_phpmyadmin
-
-   install_postfix
-
-   install_courier
-
-   install_fail2ban
-
-   install_bind
-
-   install_htop
-
-   install_mumble
-
-   install_nodejs
+  evalMain 'echo ":: Installation de Docker-CE" '
+  evalLog 'apt-get -y update'
+  evalLog 'apt-get -y install docker-ce'
 
   evalMain 'echo ":: Fin du script" '
 
