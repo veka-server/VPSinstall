@@ -11,7 +11,7 @@ wget -q -O - https://raw.githubusercontent.com/veka-server/docker-ce_install_deb
 
 Utilisation
 ```
-wget -q -O - https://raw.githubusercontent.com/veka-server/docker-ce_install_debian/master/active_tls.sh | sh
+wget -q -O - https://raw.githubusercontent.com/veka-server/docker-ce_install_debian/master/generate_certificates.sh | sh
 ```
 
 
